@@ -6,9 +6,14 @@ export type TabType = 'home' | 'category' | 'cart' | 'profile';
 interface TabBarProps {
   currentTab: TabType;
   onSelectTab: (tab: TabType) => void;
+  cartCount?: number;
 }
 
-export function TabBar({ currentTab, onSelectTab }: TabBarProps) {
+export function TabBar({
+  currentTab,
+  onSelectTab,
+  cartCount = 0,
+}: TabBarProps) {
   const tabs: { key: TabType; label: string; icon: string }[] = [
     { key: 'home', label: 'Trang chủ', icon: '🏠' },
     { key: 'category', label: 'Danh mục', icon: '📑' },
@@ -27,7 +32,14 @@ export function TabBar({ currentTab, onSelectTab }: TabBarProps) {
             onPress={() => onSelectTab(tab.key)}
             activeOpacity={0.7}
           >
-            <Text style={styles.icon}>{tab.icon}</Text>
+            <View style={styles.iconWrap}>
+              <Text style={styles.icon}>{tab.icon}</Text>
+              {tab.key === 'cart' && cartCount > 0 && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>{cartCount}</Text>
+                </View>
+              )}
+            </View>
             <Text style={[styles.label, isActive && styles.activeLabel]}>
               {tab.label}
             </Text>
@@ -41,7 +53,7 @@ export function TabBar({ currentTab, onSelectTab }: TabBarProps) {
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    height: 60,
+    height: 62,
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#E2E8F0',
@@ -52,13 +64,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  iconWrap: {
+    position: 'relative',
+    width: 32,
+    height: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   icon: {
     fontSize: 20,
-    marginBottom: 2,
+  },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -8,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#EF4444',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
   },
   label: {
     fontSize: 11,
     color: '#64748B',
+    marginTop: 2,
     fontWeight: '500',
   },
   activeLabel: {

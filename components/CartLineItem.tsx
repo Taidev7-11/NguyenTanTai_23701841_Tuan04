@@ -1,20 +1,48 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { CartItem } from '../data';
 
-export function CartLineItem({ item }: { item: CartItem }) {
+interface CartLineItemProps {
+  item: CartItem;
+  onIncrease: (id: number) => void;
+  onDecrease: (id: number) => void;
+}
+
+export function CartLineItem({
+  item,
+  onIncrease,
+  onDecrease,
+}: CartLineItemProps) {
   return (
-    <View style={styles.container}>
+    <View style={styles.card}>
       <Image source={{ uri: item.book.cover }} style={styles.cover} />
       <View style={styles.infoCol}>
-        <Text style={styles.title} numberOfLines={2}>
+        <Text style={styles.title} numberOfLines={1}>
           {item.book.title}
         </Text>
         <Text style={styles.author}>{item.book.author}</Text>
-        <Text style={styles.quantity}>SL: {item.quantity}</Text>
+        <Text style={styles.unitPrice}>
+          {item.book.price.toLocaleString()} đ
+        </Text>
       </View>
-      <View style={styles.priceCol}>
-        <Text style={styles.price}>
+
+      <View style={styles.actionCol}>
+        <View style={styles.qtyControls}>
+          <TouchableOpacity
+            style={styles.qtyBtn}
+            onPress={() => onDecrease(item.id)}
+          >
+            <Text style={styles.qtyBtnText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.qtyVal}>{item.quantity}</Text>
+          <TouchableOpacity
+            style={styles.qtyBtn}
+            onPress={() => onIncrease(item.id)}
+          >
+            <Text style={styles.qtyBtnText}>+</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.totalItemPrice}>
           {(item.book.price * item.quantity).toLocaleString()} đ
         </Text>
       </View>
@@ -23,13 +51,13 @@ export function CartLineItem({ item }: { item: CartItem }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  card: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 10,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#E2E8F0',
   },
@@ -46,7 +74,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#0F172A',
   },
   author: {
@@ -54,17 +82,40 @@ const styles = StyleSheet.create({
     color: '#64748B',
     marginTop: 2,
   },
-  quantity: {
-    fontSize: 12,
+  unitPrice: {
+    fontSize: 13,
     color: '#4338CA',
-    marginTop: 6,
     fontWeight: '600',
+    marginTop: 6,
   },
-  priceCol: {
-    width: 90,
+  actionCol: {
     alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    height: 70,
   },
-  price: {
+  qtyControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F1F5F9',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  qtyBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  qtyBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  qtyVal: {
+    paddingHorizontal: 6,
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  totalItemPrice: {
     fontSize: 14,
     fontWeight: '700',
     color: '#166534',
